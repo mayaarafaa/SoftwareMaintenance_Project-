@@ -205,8 +205,6 @@ public class AssessmentController {
         }
     }
 
-//features
-    //1
     @PostMapping("/quiz/{quizId}/submit-with-feedback")
     public ResponseEntity<String> submitQuizWithFeedback(@PathVariable Long quizId, @RequestBody Map<String, Object> payload) {
         try {
@@ -232,7 +230,6 @@ public class AssessmentController {
             return new ResponseEntity<>("An unexpected error occurred while submitting the quiz.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //2
     @GetMapping("/quiz/{quizId}/question-count")
     public ResponseEntity<String> getQuizQuestionCount(@PathVariable Long quizId) {
         Quiz quiz = StudentService.findQuizById(quizId);
@@ -243,7 +240,22 @@ public class AssessmentController {
         int count = quiz.getQuestions().size();
         return ResponseEntity.ok("This quiz has " + count + " questions.");
     }
-    //3
+    @PutMapping("/quiz/{id}/publish")
+    public ResponseEntity<String> publishQuiz(@PathVariable Long id, @RequestParam boolean publish) {
+        try {
+            Quiz quiz = InstructorService.findQuizById(id);
+            if (quiz == null) {
+                return new ResponseEntity<>("Quiz not found.", HttpStatus.NOT_FOUND);
+            }
+
+            quiz.setPublished(publish);
+            InstructorService.updateQuiz(quiz);  // Assume your service saves the update
+
+            return new ResponseEntity<>("Quiz " + (publish ? "published" : "unpublished") + " successfully.", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update publish status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @DeleteMapping("/quizzes/{id}")
     public ResponseEntity<String> deleteQuiz(@PathVariable Long id) {
         try {
@@ -258,36 +270,23 @@ public class AssessmentController {
             return new ResponseEntity<>("Failed to delete quiz: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    //4
     @GetMapping("/quizzes/titles")
     public ResponseEntity<List<String>> getQuizTitles() {
         List<Quiz> quizzes = StudentService.GetAllquizzes();
         List<String> titles = quizzes.stream().map(Quiz::getTitle).toList();
         return ResponseEntity.ok(titles);
     }
-    //5
     @GetMapping("/quizzes/{id}/exists")
     public ResponseEntity<Boolean> doesQuizExist(@PathVariable Long id) {
         Quiz quiz = StudentService.findQuizById(id);
         return ResponseEntity.ok(quiz != null);
     }
-    //6
     @GetMapping("/quizzes/published")
     public ResponseEntity<List<Quiz>> getPublishedQuizzes() {
         List<Quiz> published = StudentService.GetAllquizzes().stream()
                 .filter(Quiz::isPublished)
                 .toList();
         return ResponseEntity.ok(published);
-    }
-    //7
-    @PutMapping("/quizzes/{id}/toggle-publish")
-    public ResponseEntity<String> togglePublishStatus(@PathVariable Long id) {
-        Quiz quiz = StudentService.findQuizById(id);
-        if (quiz == null) {
-            return new ResponseEntity<>("Quiz not found", HttpStatus.NOT_FOUND);
-        }
-        quiz.setPublished(!quiz.isPublished());
-        return ResponseEntity.ok("Quiz publish status updated to: " + quiz.isPublished());
     }
 
 }

@@ -129,5 +129,10 @@ public class InstructorService extends UserService {
         }
         return assessmentService.trackStudentQuizPerformance(studentId);
     }
+    private static List<Quiz> quizzes = new ArrayList<>(); // your quiz storage
+
+    public static void deleteQuiz(Long quizId) {
+        quizzes.removeIf(q -> q.getId().equals(quizId));
+    }
 
 }
