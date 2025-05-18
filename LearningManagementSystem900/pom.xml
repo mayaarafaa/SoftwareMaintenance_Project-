@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.lms</groupId>
-	<artifactId>Learningmanagementsystem</artifactId>
+	<artifactId>learningmanagementsystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LearningManagementSystem</name>
 	<description>Learning Management System project</description>
